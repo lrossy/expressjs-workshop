@@ -116,7 +116,7 @@ Here are the steps to follow:
   5. Paste the following content in the file:
 
   ```pug
-  form(action="/createContent", method="POST")
+  form(action="/createPost", method="POST")
     p
       input(type="text", name="url", placeholder="Enter a URL to content")
     p
