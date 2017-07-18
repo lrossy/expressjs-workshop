@@ -4,11 +4,22 @@
   "description": "ExpressJS Workshop for DecodeMTL Full-Stack Bootcamp",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "author": "DecodeMTL <hello@decodemtl.com>",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.13.3"
+    "bcrypt": "^0.8.6",
+    "bcrypt-as-promised": "^1.1.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.13.3",
+    "promise-mysql": "^3.0.2",
+    "pug": "^2.0.0-rc.2",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
