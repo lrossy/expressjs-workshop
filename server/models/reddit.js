@@ -6,31 +6,6 @@ class RedditAPI {
     this.conn = conn;
   }
 
-  createUser(user) {
-      /*
-      first we have to hash the password. we will learn about hashing next week.
-      the goal of hashing is to store a digested version of the password from which
-      it is infeasible to recover the original password, but which can still be used
-      to assess with great confidence whether a provided password is the correct one or not
-       */
-      return bcrypt.hash(user.password, HASH_ROUNDS)
-          .then(hashedPassword => {
-              return this.conn.query('INSERT INTO users (username,password, createdAt, updatedAt) VALUES (?, ?, NOW(), NOW())', [user.username, hashedPassword]);
-          })
-          .then(result => {
-              return result.insertId;
-          })
-          .catch(error => {
-              // Special error handling for duplicate entry
-              if (error.code === 'ER_DUP_ENTRY') {
-                  throw new Error('A user with this username already exists');
-              }
-              else {
-                  throw error;
-              }
-          });
-  }
-
   createPost(post) {
       if(!post.subredditId){
         return Promise.reject('subredditId property required')
@@ -181,7 +156,6 @@ class RedditAPI {
         ORDER BY c.createdAt`;
       }
 
-      console.log('q',q);
       self.conn.query(q)
         .then( res => {
           var parentKeys = [];
@@ -196,73 +170,13 @@ class RedditAPI {
             if(comment.parentId === null){
               allComments.push(comment);
             }
-            console.log('commentIdx',commentIdx)
+            // console.log('commentIdx',commentIdx)
           });
           getComments(postId, parentKeys, allComments, commentIdx, cb);
         })
     };
 
     getComments(postId, null, [], {}, cb);
-  }
-
-  xgetCommentsForPost(postId, maxlevels, level =0, commentMap = [], parent){
-    if(!postId || level<0){
-      return Promise.reject('getCommentsForPost(postId, levels) params are required')
-    }
-    console.log('getCommentsForPost level: ', level)
-
-    if(level === 0){
-      return this.conn.query(
-        `SELECT id, parentId, userId, postId, text, createdAt, updatedAt
-        FROM comments c
-        WHERE parentId IS NULL`)
-        .then(results => {
-          var parents = results.map( row => row.id);
-          return results.map( row => {
-            return {
-              id: row.id,
-              parentId: row.parentId,
-              userId: row.userId,
-              postId: row.postId,
-              text: row.text,
-              createdAt: row.createdAt,
-              replies: this.getCommentsForPost(postId, maxlevels, level+1, commentMap, row.id)
-            }
-          });
-        });
-    }
-    else if(level >= maxlevels ){
-      // console.log('level reached!', level, maxlevels);
-      // console.log('parents',parents);
-      // console.log('commentMap', JSON.stringify(commentMap, undefined, 2));
-      return commentMap;
-    }
-    else{
-      // console.log('Checking parentID: ', parent);
-      // console.log('commentMap', commentMap);
-
-      return this.conn.query(
-        `SELECT id, parentId, userId, postId, text, createdAt, updatedAt
-          FROM comments c
-          WHERE parentId = ?`, parent)
-        .then(results => {
-          // console.log('results: ', results);
-          return results.map( subComment => {
-            // console.log('subComment', JSON.stringify(subComment, undefined, 2));
-            return {
-              id: subComment.id,
-              parentId: subComment.parentId,
-              userId: subComment.userId,
-              postId: subComment.postId,
-              text: subComment.text,
-              createdAt: subComment.createdAt,
-              replies: this.getCommentsForPost(postId, maxlevels, level+1, commentMap, subComment.id)
-            }
-          });
-          // console.log('test', JSON.stringify(test, undefined, 2));
-          // return this.getCommentsForPost(postId, maxlevels, level+1, commentMap, parents);
-        });
-    }
   }
 }
 

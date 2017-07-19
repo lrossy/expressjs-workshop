@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon server/server.js"
   },
   "author": "DecodeMTL <hello@decodemtl.com>",
   "license": "ISC",
@@ -14,10 +14,12 @@
     "bcrypt-as-promised": "^1.1.0",
     "body-parser": "^1.17.2",
     "express": "^4.13.3",
+    "lodash": "^4.17.4",
     "promise-mysql": "^3.0.2",
     "pug": "^2.0.0-rc.2",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "secure-random": "^1.1.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
