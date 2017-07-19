@@ -4,7 +4,7 @@ var app = express();
 var mysql = require('promise-mysql');
 var RedditAPI = require('./reddit');
 var path = require('path');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 // create a connection to our Cloud9 server
 var connection = mysql.createPool({
@@ -19,10 +19,10 @@ var myReddit = new RedditAPI(connection);
 app.set('view engine', 'pug');
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
-app.use(bodyParser.json())
+// app.use(bodyParser.json())
 
 app.use('/files', express.static('static_files'));
 
@@ -75,7 +75,7 @@ app.get('/new-post', function (req, res) {
   // res.sendFile(path.join(__dirname + '/views/newPost.html'));
 });
 
-app.post('/createPost', function (req, res) {
+app.post('/createPost', bodyParser.urlencoded({ extended: false }), function (req, res) {
 
   myReddit.createPost({
     title: req.body.title,
